@@ -17,8 +17,8 @@ public class User {
 	private String password;
 	/**郵便番号*/
 	private String zipcode;
-	/**住所*/
-	private String addres;
+	/**住所 */
+	private String address;
 	/**電話番号*/
 	private String telephone;
 	public Integer getId() {
@@ -51,22 +51,22 @@ public class User {
 	public void setZipcode(String zipcode) {
 		this.zipcode = zipcode;
 	}
-	public String getAddres() {
-		return addres;
-	}
-	public void setAddres(String addres) {
-		this.addres = addres;
-	}
 	public String getTelephone() {
 		return telephone;
 	}
 	public void setTelephone(String telephone) {
 		this.telephone = telephone;
 	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", zipcode="
-				+ zipcode + ", addres=" + addres + ", telephone=" + telephone + "]";
+				+ zipcode + ", address=" + address + ", telephone=" + telephone + "]";
 	}
 	
 	
