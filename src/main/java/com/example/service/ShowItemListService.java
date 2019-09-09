@@ -24,8 +24,17 @@ public class ShowItemListService {
 	 * @return アイテムリスト
 	 */
 	public List<Item> showItem(){
-		
 		List<Item> itemList=itemRepository.findAll();
+		return itemList;
+	}
+	
+	/**
+	 * 商品をあいまい検索する.
+	 * @param name 商品名
+	 * @return　商品のリスト
+	 */
+	public List<Item>serchByName(String name){
+		List<Item> itemList=itemRepository.serchByName(name);
 		return itemList;
 	}
 	

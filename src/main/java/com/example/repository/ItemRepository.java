@@ -56,6 +56,16 @@ public class ItemRepository {
 		return item;
 	}
 	
-	
+	/**
+	 * 商品名であいまい検索をする.
+	 * @param name 商品名
+	 * @return　商品リスト
+	 */
+	public List<Item> serchByName(String name){
+		String sql="SELECT id,name,description,price_m,price_l,deleted,image_path FROM items WHERE name LIKE :name";
+		SqlParameterSource param=new MapSqlParameterSource().addValue("name","%"+name+"%");
+		List<Item> itemList=template.query(sql, param,ITEM_ROW_MAPPER);
+		return itemList;
+	}
 	
 }

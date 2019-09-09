@@ -33,8 +33,14 @@ public class ShowItemListController {
 		List<Item> itemList=  showItemListService.showItem();
 		model.addAttribute("itemList",itemList);
 		return "item_list";
-		
 	} 
+	
+	@RequestMapping("/serchByName")
+	public String serchByName(String name ,Model model) {
+		List<Item> itemList=  showItemListService.serchByName(name);
+		model.addAttribute("itemList",itemList);
+		return "item_list";
+	}
 	
 	
 
