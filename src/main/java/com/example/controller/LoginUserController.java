@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -44,7 +45,7 @@ public class LoginUserController {
 	 * @return 商品一覧画面
 	 */
 	@RequestMapping("/find")
-	public String login(@Validated LoginUserForm form, BindingResult result) {
+	public String login(@Validated LoginUserForm form, BindingResult result, Model model) {
 		List<User> userList = loginUserService.login(form);
 		// ログイン失敗時の処理
 		if (!(form.getEmail().equals(""))) {
@@ -61,6 +62,6 @@ public class LoginUserController {
 			return "login";
 		}
 		// ログイン成功時の処理
-		return "item_list";
+		return "forward:/itemList/showItemList";
 	}
 }
