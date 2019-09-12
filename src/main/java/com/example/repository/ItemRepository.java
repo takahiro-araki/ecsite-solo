@@ -42,6 +42,7 @@ public class ItemRepository {
 		String sql="SELECT id,name,description,price_m,price_l,deleted,image_path FROM items";
 		List<Item> itemList=template.query(sql, ITEM_ROW_MAPPER);
 		return itemList;
+		
 	}
 	
 	/**
@@ -54,6 +55,7 @@ public class ItemRepository {
 		SqlParameterSource param = new MapSqlParameterSource().addValue("id",id);
 		Item item=template.queryForObject(sql, param, ITEM_ROW_MAPPER);
 		return item;
+		
 	}
 	
 	/**
@@ -61,6 +63,7 @@ public class ItemRepository {
 	 * @param name 商品名
 	 * @return　商品リスト
 	 */
+	
 	public List<Item> serchByName(String name){
 		String sql="SELECT id,name,description,price_m,price_l,deleted,image_path FROM items WHERE name LIKE :name";
 		SqlParameterSource param=new MapSqlParameterSource().addValue("name","%"+name+"%");

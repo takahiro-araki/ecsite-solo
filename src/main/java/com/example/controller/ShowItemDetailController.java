@@ -1,11 +1,15 @@
 package com.example.controller;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.domain.Item;
+import com.example.domain.Topping;
 import com.example.service.ShowItemDetailService;
 
 /**
@@ -29,10 +33,14 @@ public class ShowItemDetailController {
 	@RequestMapping("")
 	public String showItemDetail(String id,Model model) {
 		Item item= showItemDetailService.loadItemDetail(id);
+		Map<Integer,String>toppingMap=new LinkedHashMap<>();
+		for (Topping topping:item.getToppingList()) {
+			toppingMap.put(topping.getId(), topping.getName());
+		}
 		model.addAttribute("item",item);
+		model.addAttribute("toppingMap",toppingMap);
 		return "item_detail";
 	}
 	
 	
-
 }

@@ -42,5 +42,4 @@ public class ShowItemDetailService {
 		return item;
 	}
 	
-
 }

@@ -126,6 +126,27 @@ public class Order {
 	public void setOrderItemList(List orderItemList) {
 		this.orderItemList = orderItemList;
 	}
+	
+	
+	/**
+	 * 消費税を算出する.
+	 * @return 消費税金額
+	 */
+	public int getTax() {
+		int tax=(int)(this.getTotalPrice()*0.08);
+		return tax;
+	}
+	
+	/**
+	 * 消費税込みの合計金額を算出する.
+	 * @return 消費税込み合計金額
+	 */
+	public int getCalcTotalPrice() {
+		int tax=this.getTax();
+		int calcTotalPrice=(int)(tax+this.getTotalPrice());
+		return calcTotalPrice;
+	}
+	
 	@Override
 	public String toString() {
 		return "Order [id=" + id + ", userId=" + userId + ", status=" + status + ", totalPrice=" + totalPrice

@@ -31,7 +31,7 @@ public class Item {
 	private Boolean deleted;
 
 	/** トッピングリスト */
-	private List toppingList;
+	private List<Topping> toppingList;
 
 	public Integer getId() {
 		return id;
@@ -89,11 +89,13 @@ public class Item {
 		this.deleted = deleted;
 	}
 
-	public List getToppingList() {
+
+
+	public List<Topping> getToppingList() {
 		return toppingList;
 	}
 
-	public void setToppingList(List toppingList) {
+	public void setToppingList(List<Topping> toppingList) {
 		this.toppingList = toppingList;
 	}
 
@@ -103,4 +105,5 @@ public class Item {
 				+ priceL + ", imagePath=" + imagePath + ", deleted=" + deleted + ", toppingList=" + toppingList + "]";
 	}
 
+	
 }
