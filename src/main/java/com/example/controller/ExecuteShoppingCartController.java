@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.domain.Order;
 import com.example.form.InsertItemForm;
+import com.example.form.OrderShoppingCartForm;
 import com.example.service.ExecuteShoppingCartService;
 
 /**
@@ -25,10 +26,8 @@ public class ExecuteShoppingCartController {
 	
 	@ModelAttribute
 	public InsertItemForm setInsertItemForm() {
-		return new InsertItemForm();
-		
+		return new InsertItemForm();	
 	}
-	
 	
 	/**
 	 * 商品をショッピングカートに入れる.
@@ -38,7 +37,7 @@ public class ExecuteShoppingCartController {
 	@RequestMapping("")
 	public String insertShoppingCart(InsertItemForm form ,Model model) {
 		executeShoppingCartService.insertShoppingCart(form);
-		return findAllById("16",model);
+		return findAllById("18",model);
 	}
 	
 	/**
@@ -49,12 +48,12 @@ public class ExecuteShoppingCartController {
 	@RequestMapping("/delete")
 	public String delete(String id,Model model) {
 		executeShoppingCartService.delete(id);
-		return findAllById("16",model);
+		return findAllById("18",model);
 	}
 	
 	/**
 	 * オーダー情報を表示する.
-	 * @param id
+	 * @param id オーダーID
 	 * @param model リクエストパラメーター
 	 * @return ショッピングカート画面
 	 */
@@ -64,5 +63,31 @@ public class ExecuteShoppingCartController {
 		model.addAttribute("order",order);
 		return "cart_list";
 	}
-
+	
+	
+	/**
+	 * 注文確認画面を表示する.
+	 * @param id オーダーID
+	 * @param model リクエストスコープ 
+	 * @return　注文確認画面 
+	 */
+	@RequestMapping("/showOrderConfirm")
+	public String showOrderConfirm(String id,Model model) {
+		Order order=executeShoppingCartService.findAllById(id);
+		model.addAttribute("order",order);
+		return "order_confirm";
+	}
+	
+	
+	
+	/**
+	 * オーダー情報を更新する.
+	 * @param form 更新情報フォーム
+	 * @return 注文完了画面　
+	 */
+	@RequestMapping("/update")
+	public String updateOrder(OrderShoppingCartForm form) {
+		executeShoppingCartService.updateOrder(form);
+		return"order_finished";
+	}
 }

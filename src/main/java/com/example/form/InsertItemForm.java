@@ -18,6 +18,7 @@ public class InsertItemForm {
 	private String itemId;
 	/**トッピングIDリスト*/
 	private List<String> toppingIdList;
+	
 	public String getSize() {
 		return size;
 	}

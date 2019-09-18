@@ -42,8 +42,8 @@ public class ItemRepository {
 		String sql="SELECT id,name,description,price_m,price_l,deleted,image_path FROM items";
 		List<Item> itemList=template.query(sql, ITEM_ROW_MAPPER);
 		return itemList;
-		
 	}
+	
 	
 	/**
 	 * 商品情報を主キー検索する.
@@ -55,20 +55,24 @@ public class ItemRepository {
 		SqlParameterSource param = new MapSqlParameterSource().addValue("id",id);
 		Item item=template.queryForObject(sql, param, ITEM_ROW_MAPPER);
 		return item;
-		
 	}
 	
 	/**
-	 * 商品名であいまい検索をする.
-	 * @param name 商品名
+	 * 商品名であいまい検索と、並び替えも行う.
+	 * @param name 商品名 order　順序
 	 * @return　商品リスト
 	 */
-	
-	public List<Item> serchByName(String name){
-		String sql="SELECT id,name,description,price_m,price_l,deleted,image_path FROM items WHERE name LIKE :name";
+	public List<Item> serchByName(String name,String order,Integer viewSize,Integer startPoint){
+		StringBuilder sql=new StringBuilder();
+		sql.append("SELECT id,name,description,price_m,price_l,deleted,image_path FROM items WHERE name LIKE :name ORDER BY ");
+		sql.append(" "+order+" ");
+		sql.append(" LIMIT "+viewSize+" ");
+		sql.append(" OFFSET "+startPoint+" ");
 		SqlParameterSource param=new MapSqlParameterSource().addValue("name","%"+name+"%");
-		List<Item> itemList=template.query(sql, param,ITEM_ROW_MAPPER);
+		List<Item> itemList=template.query(sql.toString(), param,ITEM_ROW_MAPPER);
 		return itemList;
 	}
+	
+
 	
 }

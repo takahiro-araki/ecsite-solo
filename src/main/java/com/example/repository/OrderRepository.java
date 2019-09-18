@@ -196,5 +196,20 @@ public class OrderRepository {
 		List<Order> orderList = template.query(sql, param, ORDER_ROW_MAPPER);
 		return orderList;
 	}
-
+	
+	/**
+	 * オーダー情報を更新する.
+	 * @param オーダー情報
+	 */
+	public void uploadOrder(Order order) {
+		StringBuilder sql=new StringBuilder();
+		sql.append("UPDATE orders SET status=:status, total_price=:totalPrice,order_date=:orderDate,destination_name=:destinationName, ");
+		sql.append("destination_email=:destinationEmail,destination_zipcode=:destinationZipcode,destination_address=:destinationAddress,");
+		sql.append("destination_tel=:destinationTel,delivery_time=:deliveryTime,payment_method=:paymentMethod WHERE user_id=:id");
+		
+		SqlParameterSource param= new BeanPropertySqlParameterSource(order);
+		template.update(sql.toString(), param);
+	}
+	
+	
 }

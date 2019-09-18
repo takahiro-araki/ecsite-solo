@@ -107,8 +107,7 @@
 								</div>
 								</form>
 							</td>
-						</tr>
-					
+						</tr>					
 					</tbody>
 				</table>
 			</div>
@@ -116,8 +115,8 @@
 		<div class="row">
 			<div class="col-xs-offset-2 col-xs-8">
 				<div class="form-group text-center">
-					消費税：<span id="total-price" th:text="${order.Tax}"></span>円<br>
-					ご注文金額合計<span id="total-price" th:text="${order.CalcTotalPrice}"></span>円（税込み）
+					消費税：<span id="total-price" th:text="${order.tax}"></span>円<br>
+					ご注文金額合計<span id="total-price" th:text="${order.calcTotalPrice}"></span>円（税込み）
 				</div>
 			</div>
 		</div>
@@ -125,7 +124,8 @@
 		<div class="row">
 			<div class="col-xs-offset-5 col-xs-3">
 				<div class="form-group">
-					<form action="order_confirm.html">
+					<form th:action="@{/Execute/showOrderConfirm}">
+					<input type="hidden" name= "id" th:value="${order.id}">
 						<input class="form-control btn btn-warning btn-block"
 							type="submit" value="注文に進む">
 					</form>

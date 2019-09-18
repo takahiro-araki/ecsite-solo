@@ -7,11 +7,25 @@
 <title>ピザ屋のネット注文</title>
 <link href="/css/bootstrap.css" rel="stylesheet">
 <link href="/css/piza.css" rel="stylesheet">
+<link rel="stylesheet"
+	href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+<script>
+$(function(){
+	var availableTag=[ [(${itemName})] ];
+	$("#serchByName").autocomplete({
+		source:availableTag,
+		noCase: true
+	});
+});
+</script>
 </head>
+
 <body>
 	<div class="container">
 		<nav class="navbar navbar-default">
@@ -36,8 +50,8 @@
 					<p class="navbar-text navbar-right">
 						<a href="cart_list.html" class="navbar-link">ショッピングカート</a>&nbsp;&nbsp;
 						<a href="order_history.html" class="navbar-link">注文履歴</a>&nbsp;&nbsp;
-						<a href="login.html" class="navbar-link">ログイン</a>&nbsp;&nbsp;
-						<a href="item_list.html" class="navbar-link">ログアウト</a>
+						<a href="login.html" class="navbar-link">ログイン</a>&nbsp;&nbsp; <a
+							href="item_list.html" class="navbar-link">ログアウト</a>
 					</p>
 				</div>
 				<!-- /.navbar-collapse -->
@@ -54,11 +68,12 @@
 						<div class="panel-title">商品を検索する</div>
 					</div>
 					<div class="panel-body">
-						<form method="post" th:action="@{/itemList/serchByName}" class="form-horizontal" >
+						<form method="post" th:action="@{/itemList/serchByName}"
+							class="form-horizontal">
 							<div class="form-group">
 								<label for="code" class="control-label col-sm-2">商品名</label>
 								<div class="col-sm-9">
-									<input type="text" name="name"  id="code"
+									<input type="text" name="name" id="serchByName"
 										class="form-control input-sm" />
 								</div>
 							</div>
@@ -66,6 +81,12 @@
 								<button type="submit" value="検索" class="btn btn-primary">検索</button>
 								<button type="reset" value="クリア" class="btn btn-default">クリア</button>
 							</div>
+							<select name="order">
+								<option selected value="id asc">---</option>
+								<option value="price_m asc">安い順</option>
+								<option value="price_m desc">高い順</option>
+							</select>
+							<button type="submit">並び替えをする</button>
 						</form>
 					</div>
 				</div>
@@ -80,24 +101,24 @@
 					<tbody>
 						<tr th:each="item:${itemList}">
 
-							<th>
-								<a th:href="@{/detail(id=${item.id})}">
-									<img th:src="@{'/img/'+${item.imagePath}}"
-										class="img-responsive img-rounded" width="200" height="600">
-								</a><br>
-								<a th:href="@{/detail(id=${item.id})}" th:text="${item.name}">じゃがバターベーコン</a><br>
-								Mサイズ:<span class="price" th:text="${item.priceM}">&nbsp;М&nbsp;</span>&nbsp;&nbsp;1,380円(税抜)<br>
-								Lサイズ:<span class="price" th:text="${item.priceL}">&nbsp;Ｌ</span>&nbsp;&nbsp;2,380円(税抜)<br>
-							</th>
+							<th><a th:href="@{/detail(id=${item.id})}"> <img
+									th:src="@{'/img/'+${item.imagePath}}"
+									class="img-responsive img-rounded" width="200" height="600">
+							</a><br> <a th:href="@{/detail(id=${item.id})}"
+								th:text="${item.name}">じゃがバターベーコン</a><br> Mサイズ:<span
+								class="price" th:text="${item.priceM}"></span><br> Lサイズ:<span
+								class="price" th:text="${item.priceL}"></span><br></th>
 						</tr>
 					</tbody>
 				</table>
-
 			</div>
 		</div>
-	</div>
+			<a th:href="@{/itemList/serchByName(name=${name},order=${order},getPage=${page}+1)}">次へ 
+				</a><a th:href="@{/itemList/serchByName(name=${name},order=${order},getPage=${page}-1)}">前へ 
+				</a>
+		</div>
 	<!-- end container -->
-<!-- 	<script
+	<!-- 	<script
 		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
 	<script src="/css/bootstrap.min.js"></script>
 </body>
