@@ -34,8 +34,8 @@ public class ShowItemDetailController {
 	public String showItemDetail(String id,Model model) {
 		Item item= showItemDetailService.loadItemDetail(id);
 		Map<Integer,String>toppingMap=new LinkedHashMap<>();
-		for (Topping topping:item.getToppingList()) {
-			toppingMap.put(topping.getId(), topping.getName());
+			for (Topping topping:item.getToppingList()) {
+				toppingMap.put(topping.getId(), topping.getName());
 		}
 		model.addAttribute("item",item);
 		model.addAttribute("toppingMap",toppingMap);

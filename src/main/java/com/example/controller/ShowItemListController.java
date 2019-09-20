@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.domain.Item;
+import com.example.form.ShowItemForm;
 import com.example.service.ShowItemListService;
 
 /**
@@ -28,55 +29,33 @@ public class ShowItemListController {
 	private ShowItemListService showItemListService;
 
 	/**
-	 * アイテム一覧を表示する.
+	 * アイテム一覧を表示、曖昧検索、並び替え、ページングもやる.
 	 * 
 	 * @param model リクエストパラメーター
 	 * @return アイテム一覧表示画面
 	 */
 	@RequestMapping("/showItemList")
-	public String showItemList(Model model) {
-		List<Item> itemList = showItemListService.showItem();
-		StringBuilder itemName = showItemListService.prepareAutocomplete(itemList);
-		model.addAttribute("itemList", itemList);
-		model.addAttribute("itemName", itemName);
-
-		// ページングのリンクを作成
-		// ナンバリングができなそうなので保留
-		/*
-		 * int page; if (itemList.size() % VIEW_SIZE != 0) { page = (itemList.size() /
-		 * VIEW_SIZE) + 1; } else { page = itemList.size() / VIEW_SIZE; }
-		 * model.addAttribute("page", page);
-		 */
-
-		return "item_list";
-	}
-
-	/**
-	 * 商品をあいまい検索し、かつ並び替えを行う.
-	 * 
-	 * @param name  検索名前 order順序
-	 * @param model
-	 * @return 商品一覧画面
-	 */
-	@RequestMapping("/serchByName")
-	public String serchByName(String name, String order, String getPage, Model model) {
-		
-		// どこから始まるかを特定
-		int page = 0;
-		if (getPage == null) {
-			page = 1;
+	public String showItemList(Model model, ShowItemForm form) {
+		// ページング処理
+		int startPage = 0;
+		if (form.getPage() == null) {
+			startPage = 1;
 		} else {
-			page = Integer.parseInt(getPage);
+			startPage = Integer.parseInt(form.getPage());
 		}
-		// ページ数も残したいため、スコープに格納
-		model.addAttribute("page", page);
 		// SQLのOFFSETで使う際のスタートポイントを特定
 		int startPoint;
-		if (getPage == null) {
+		if (form.getPage() == null || Integer.parseInt(form.getPage()) <= 0) {
 			startPoint = 0;
+			startPage = 1;
 		} else {
-			startPoint =( (page - 1) * VIEW_SIZE) ;
+			startPoint = ((startPage - 1) * VIEW_SIZE);
 		}
+		// ページ数も残したいため、スコープに格納
+		model.addAttribute("startPage", startPage);
+		
+		String name = form.getName();
+		String order = form.getOrder();
 		// nameとorderはnullの場合、あらかじめ値をセット
 		if (name == null) {
 			name = "";
@@ -85,20 +64,35 @@ public class ShowItemListController {
 			order = "id asc";
 		}
 		List<Item> itemList = showItemListService.serchByName(name, order, VIEW_SIZE, startPoint);
-		model.addAttribute("itemList", itemList);
-
-		// ナンバリングは保留するのでコメントアウト
-		/*
-		 * int subLink; if (itemList.size() % VIEW_SIZE != 0) { subLink =
-		 * (itemList.size() / VIEW_SIZE) + 1; } else { subLink = itemList.size() /
-		 * VIEW_SIZE; } List<Integer> pageList = new ArrayList<>(); for (int i = 1; i <=
-		 * subLink; i++) { pageList.add(i); } model.addAttribute("pageList", pageList);
-		 */
-
-		// ページング後も、並び替え検索やあいまい検索ができるように
+		// 商品リスト、あいまい検索の文字列と並び替え用の文字列を格納
 		model.addAttribute("name", name);
 		model.addAttribute("order", order);
+		// 画面表示用のリストを作成
+		List<List<Item>> totalList = new ArrayList<>();
+		List<Item> list3 = new ArrayList<>();
+		for (int i = 1; i <= itemList.size(); i++) {
+			System.out.println(itemList.get(i - 1));
+			list3.add(itemList.get(i - 1));
+			if (i % 3 == 0) {
+				totalList.add(list3);
+				list3 = new ArrayList<>();
+			}
+		}
+		totalList.add(list3);
+		model.addAttribute("totalList", totalList);
+		
+		// オートコンプリート用の文字列を用意する.
+		StringBuilder itemName = showItemListService.prepareAutocomplete(itemList);
+		model.addAttribute("itemName", itemName);
+		// ページングのリンクを作成
+		// ナンバリングができなそうなので保留
+		/*
+		 * int page; if (itemList.size() % VIEW_SIZE != 0) { page = (itemList.size() /
+		 * VIEW_SIZE) + 1; } else { page = itemList.size() / VIEW_SIZE; }
+		 * model.addAttribute("page", page);
+		 */
 		return "item_list";
+
 	}
 
 }

@@ -18,6 +18,10 @@ public class InsertItemForm {
 	private String itemId;
 	/**トッピングIDリスト*/
 	private List<String> toppingIdList;
+	/**ユーザーID*/
+	private String userId;
+	/**仮ユーザーID */
+	private String preUserId;
 	
 	public String getSize() {
 		return size;
@@ -44,10 +48,29 @@ public class InsertItemForm {
 	public void setToppingIdList(List<String> toppingIdList) {
 		this.toppingIdList = toppingIdList;
 	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getPreUserId() {
+		return preUserId;
+	}
+
+	public void setPreUserId(String preUserId) {
+		this.preUserId = preUserId;
+	}
+
 	@Override
 	public String toString() {
 		return "InsertItemForm [size=" + size + ", quantity=" + quantity + ", itemId=" + itemId + ", toppingIdList="
-				+ toppingIdList + "]";
+				+ toppingIdList + ", userId=" + userId + ", preUserId=" + preUserId + "]";
 	}
+	
+	
 	
 }

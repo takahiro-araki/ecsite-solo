@@ -8,7 +8,6 @@ import java.util.List;
  * 
  * @author takahiro.araki
  * 
- * ※getTaxメソッドとgetCalcTotalPriceメソッド未実装
  * 
  *
  */
@@ -39,9 +38,9 @@ public class Order {
 	/**支払方法*/
 	private Integer paymentMethod;
 	/**ユーザー情報*/
-	private User user;
+	private UserDomain user;
 	/**オーダー商品リスト */
-	private List orderItemList;
+	private List<OrderItem> orderItemList;
 	public Integer getId() {
 		return id;
 	}
@@ -114,42 +113,52 @@ public class Order {
 	public void setPaymentMethod(Integer paymentMethod) {
 		this.paymentMethod = paymentMethod;
 	}
-	public User getUser() {
+	public UserDomain getUser() {
 		return user;
 	}
-	public void setUser(User user) {
+	public void setUser(UserDomain user) {
 		this.user = user;
 	}
-	public List getOrderItemList() {
+	
+	
+	
+	public List<OrderItem> getOrderItemList() {
 		return orderItemList;
 	}
-	public void setOrderItemList(List orderItemList) {
+	public void setOrderItemList(List<OrderItem> orderItemList) {
 		this.orderItemList = orderItemList;
 	}
-	
-	
 	/**
 	 * 消費税を算出する.
 	 * @return 消費税金額
 	 */
 	public int getTax() {
-		int tax=(int)(this.getTotalPrice()*0.08);
-		return tax;
+		int price=0;
+		int tax=0;
+		for(OrderItem orderItem:this.getOrderItemList()) {
+			int subTotal=orderItem.getSubTotal();
+			price+=subTotal;
+		}
+		return tax=(int)(price*0.08);
 	}
 	
 	/**
-	 * 消費税込みの合計金額を算出する.
+	 * 消費税込みの合計金額(TotalPrice)を算出する.
 	 * @return 消費税込み合計金額
 	 */
 	public int getCalcTotalPrice() {
-		int tax=this.getTax();
-		int calcTotalPrice=(int)(tax+this.getTotalPrice());
-		return calcTotalPrice;
+		
+		//オーダーアイテムリストの中にあるオーダーアイテムの金額をひとつひとつ出して、合計する。
+		int price=0;
+		int totalProce=0;
+		for(OrderItem orderItem:this.getOrderItemList()) {
+			int subTotal=orderItem.getSubTotal();
+			price+=subTotal;
+		}
+		//オーダーアイテムリストの中にある合計金額に消費税を込みして計算
+		return totalPrice=price+this.getTax();
+		
 	}
-	
-
-	
-	
 	@Override
 	public String toString() {
 		return "Order [id=" + id + ", userId=" + userId + ", status=" + status + ", totalPrice=" + totalPrice
@@ -159,6 +168,8 @@ public class Order {
 				+ ", paymentMethod=" + paymentMethod + ", user=" + user + ", orderItemList=" + orderItemList + "]";
 	}
 	
+
 	
+
 
 }

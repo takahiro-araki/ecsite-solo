@@ -1,6 +1,5 @@
 package com.example.controller;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -52,7 +51,7 @@ public class RegisterUserController {
 	public String insert(@Validated RegisterUserForm form,BindingResult result) {
 		
 		//登録がエラーになる場合の処理
-		if(registerUserService.load(form.getEmail()).size()>=1) {
+		if(registerUserService.load(form.getEmail())!=null) {
 			FieldError error=new FieldError(result.getObjectName(),"email","そのアドレスはすでに使われています");
 			result.addError(error);
 		}
@@ -65,6 +64,6 @@ public class RegisterUserController {
 		}
 		//登録ができた時の処理
 		registerUserService.insert(form);
-		return showRegister();
+		return "forward:/";
 	}
 }

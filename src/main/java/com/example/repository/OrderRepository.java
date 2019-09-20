@@ -117,7 +117,6 @@ public class OrderRepository {
 			id = rs.getInt("o_id");
 			id2 = rs.getInt("oi_id");
 		}
-		System.out.println("エクストラクター検証："+order.getId());
 		return order;
 	};
 
@@ -162,7 +161,6 @@ public class OrderRepository {
 		SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
 		// queryメソッドは任意のロウマッパ―かリゾルトセットエクストラクターで返した任意のオブジェクトを返す
 		Order order = template.query(sql.toString(), param, ORDER_RS_EXTRACTOR);
-		System.out.println("レポジトリメソッド検証：ID="+order.getId());
 		return order;
 	}
 	
@@ -211,5 +209,15 @@ public class OrderRepository {
 		template.update(sql.toString(), param);
 	}
 	
-	
+	/**
+	 * ユーザーIDを更新する.
+	 * @param id ログイン時のID
+	 * @param userId　仮ID
+	 */
+	public void uploadUserId(Integer id,Integer orderId) {
+		String sql="UPDATE orders SET user_id=:id WHERE id=:orderId";
+		SqlParameterSource param=new MapSqlParameterSource().addValue("id",id).addValue("orderId",orderId);
+		template.update(sql, param);
+	}
+		
 }

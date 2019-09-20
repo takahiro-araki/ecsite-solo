@@ -1,18 +1,9 @@
 package com.example.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.example.domain.User;
-import com.example.form.LoginUserForm;
-import com.example.service.LoginUserService;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * ユーザーログインをするコントローラー.
@@ -21,47 +12,52 @@ import com.example.service.LoginUserService;
  *
  */
 @Controller
-@RequestMapping("/login")
+@RequestMapping("/")
 public class LoginUserController {
-
-	@Autowired
-	private LoginUserService loginUserService;
-
-	@ModelAttribute
-	public LoginUserForm setLoginUserForm() {
-
-		return new LoginUserForm();
-	}
-
-	@RequestMapping("")
-	public String showLogin() {
-		return "login";
-	}
+	
+	/*	セキュリティコンフィグでやる*//**
+	/*
+	 * @Autowired private LoginUserService loginUserService;
+	 * 
+	 * @ModelAttribute public LoginUserForm setLoginUserForm() {
+	 * 
+	 * return new LoginUserForm(); }
+	 */
 
 	/**
-	 * ログインする.
-	 * 
-	 * @param form 情報
-	 * @return 商品一覧画面
+	 * ログイン画面を表示する.
+	 * @param model リクエストパラメーター
+	 * @param error　エラーメッセージ
+	 * @return
 	 */
-	@RequestMapping("/find")
-	public String login(@Validated LoginUserForm form, BindingResult result, Model model) {
-		List<User> userList = loginUserService.login(form);
-		// ログイン失敗時の処理
-		if (!(form.getEmail().equals(""))) {
-			if (userList.size() <= 0) {
-				result.rejectValue("email", "", "メールアドレスかパスワードが違います");
-			}
-			if (userList.size() > 0) {
-				if (!(userList.get(0).getPassword().equals(form.getPassword()))) {
-					result.rejectValue("password", "", "パスワードが違います");
-				}
-			}
+	@RequestMapping("/")
+	public String showLogin(Model model,@RequestParam(required=false) String error) {
+		System.err.println("login error:"+error);
+		if(error !=null) {
+			System.err.println("login failed");
+			model.addAttribute("errorMesssage","メールアドレスまたはパスワードが不正です。");
 		}
-		if (result.hasErrors()) {
-			return "login";
-		}
-		// ログイン成功時の処理
-		return "forward:/itemList/showItemList";
+		
+		return "login";
 	}
+	
+	
+	
+
+	/*	セキュリティコンフィグでやる*//**
+			 * ログインする.
+			 * 
+			 * @param form 情報
+			 * @return 商品一覧画面
+			 *//*
+				 * @RequestMapping("/find") public String login(@Validated LoginUserForm form,
+				 * BindingResult result, Model model) { UserDomain user =
+				 * loginUserService.login(form); // ログイン失敗時の処理 if
+				 * (!(form.getEmail().equals(""))) { if (user== null) {
+				 * result.rejectValue("email", "", "メールアドレスかパスワードが違います"); } else { if
+				 * (!(user.getPassword().equals(form.getPassword()))) {
+				 * result.rejectValue("password", "", "パスワードが違います"); } } } if
+				 * (result.hasErrors()) { return "login"; } // ログイン成功時の処理 return
+				 * "forward:/itemList/showItemList"; }
+				 */
 }

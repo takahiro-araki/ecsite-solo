@@ -5,7 +5,7 @@ package com.example.domain;
  * @author takahiro.araki
  *
  */
-public class User {
+public class UserDomain {
 	
 	/**ユーザーID*/
 	private Integer id;

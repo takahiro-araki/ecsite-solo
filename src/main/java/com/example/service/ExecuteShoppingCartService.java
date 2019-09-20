@@ -8,11 +8,13 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.example.domain.Item;
+import com.example.domain.LoginUser;
 import com.example.domain.Order;
 import com.example.domain.OrderItem;
 import com.example.domain.OrderTopping;
@@ -41,7 +43,7 @@ public class ExecuteShoppingCartService {
 	private OrderRepository orderRepository;
 	@Autowired
 	private ItemRepository itemRepository;
-	
+
 	@ModelAttribute
 	public OrderShoppingCartForm setOrderShoppingCartForm() {
 		return new OrderShoppingCartForm();
@@ -52,7 +54,7 @@ public class ExecuteShoppingCartService {
 	 * 
 	 * @param form 商品情報のフォーム
 	 */
-	public void insertShoppingCart(InsertItemForm form) {
+	public Order insertShoppingCart(InsertItemForm form, Integer userId) {
 		// フォームのプロパティをオーダー商品ドメインに渡す
 		OrderItem orderItem = new OrderItem();
 		orderItem.setItemId(Integer.parseInt(form.getItemId()));
@@ -61,25 +63,11 @@ public class ExecuteShoppingCartService {
 		// orderIdプロパティのみ、オーダードメインが既存かどうかで分岐
 		Order order = null;
 		// オーダー情報がある場合の処理
-		if (orderRepository.loadById(1).size() >= 1) {
-			// オーダーの合計金額を更新する
-			List<Order> orderList = orderRepository.loadById(1);
+		if (orderRepository.loadById(userId).size() >= 1) {
+			// オーダーの合計金額をセット
+			List<Order> orderList = orderRepository.loadById(userId);
 			order = orderList.get(0);
-			// 追加はひとつずつのため、ひとつずつ金額を足していく
-			int totalPrice;
-			int prePrice = order.getTotalPrice();
-			if (form.getSize().equals("M")) {
-				Item item = itemRepository.load(orderItem.getItemId());
-				int priceM = item.getPriceM();
-				int toppingPriceM = 200 * form.getToppingIdList().size();
-				totalPrice = (priceM + toppingPriceM) * Integer.parseInt(form.getQuantity());
-			} else {
-				Item item = itemRepository.load(orderItem.getItemId());
-				int priceL = item.getPriceL();
-				int toppingPriceL = 300 * form.getToppingIdList().size();
-				totalPrice = (priceL + toppingPriceL) * Integer.parseInt(form.getQuantity());
-			}
-			totalPrice += prePrice;
+			int totalPrice=0;
 			order.setTotalPrice(totalPrice);
 			// オーダーアイテムをインサートする
 			orderItem.setOrderId(order.getId());
@@ -95,25 +83,15 @@ public class ExecuteShoppingCartService {
 			} else {
 				// トッピングなしなので、オーダートッピングにインサートしない
 			}
+
 		} else {// オーダー情報がない場合はオーダー、オーダーアイテム、オーダートッピングテーブルに情報をインサート
 				// オーダーをインサート
 			order = new Order();
 			// ユーザーIDとステータスと合計金額だけセット
-			order.setUserId(1);
+			order.setUserId(userId);
 			order.setStatus(0);
 			// 合計金額の計算
 			int totalPrice = 0;
-			if (form.getSize().equals("M")) {
-				Item item = itemRepository.load(orderItem.getItemId());
-				int priceM = item.getPriceM();
-				int toppingPriceM = 200 * form.getToppingIdList().size();
-				totalPrice = (priceM + toppingPriceM) * Integer.parseInt(form.getQuantity());
-			} else {
-				Item item = itemRepository.load(orderItem.getItemId());
-				int priceL = item.getPriceL();
-				int toppingPriceL = 300 * form.getToppingIdList().size();
-				totalPrice = (priceL + toppingPriceL) * Integer.parseInt(form.getQuantity());
-			}
 			order.setTotalPrice(totalPrice);
 			orderRepository.insert(order);
 			/**
@@ -134,11 +112,10 @@ public class ExecuteShoppingCartService {
 					orderToppingRepository.insert(orderTopping);
 				}
 			} else {
-
 				// トッピングなしなので、オーダートッピングをインサートしない
-
 			}
 		}
+		return orderRepository.findAllById(order.getId());
 	}
 
 	/**
@@ -150,7 +127,7 @@ public class ExecuteShoppingCartService {
 		orderToppingRepository.delete(Integer.parseInt(id));
 		orderItemRepository.delete(Integer.parseInt(id));
 	}
-	
+
 	/**
 	 * オーダーテーブルの情報を主キー検索する.
 	 * 
@@ -167,27 +144,27 @@ public class ExecuteShoppingCartService {
 	 * 
 	 * @param form 注文情報フォーム
 	 */
-	public void updateOrder(OrderShoppingCartForm form) {
+	public void updateOrder(OrderShoppingCartForm form,@AuthenticationPrincipal LoginUser loginUser) {
 		Order order = new Order();
 		BeanUtils.copyProperties(form, order);
 		// status , totalPrice , orderDate , deliveryTime ,
 		// paymentMethodはデータ型が違うので、詰めなおす
 		order.setStatus(1);
-		//実験的にIDをセット
+		// 実験的にIDをセット
 		order.setId(1);
 		// 合計金額の計算
 		Order totalPrice = new Order();
-		totalPrice = orderRepository.findAllById(18);
-		order.setTotalPrice(totalPrice.getTotalPrice());
+		totalPrice = orderRepository.findAllById(loginUser.getUserDomain().getId());
+		order.setTotalPrice(totalPrice.getCalcTotalPrice());
 		// orderDateをdate型へ変換、deliveryTimeをTimestamp型に変換
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(form.getOrderDate());
 		stringBuilder.append("-");
 		stringBuilder.append(form.getDeliveryTime());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-hh");
-		String stringText=stringBuilder.toString();
-		ParsePosition pos=new ParsePosition(0);
-		Date orderDate = sdf.parse(stringText,pos);
+		String stringText = stringBuilder.toString();
+		ParsePosition pos = new ParsePosition(0);
+		Date orderDate = sdf.parse(stringText, pos);
 		Timestamp deliveryTime = new Timestamp(orderDate.getTime());
 		order.setOrderDate(orderDate);
 		order.setDeliveryTime(deliveryTime);
